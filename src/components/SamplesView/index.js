@@ -1,6 +1,6 @@
 // @flow weak
 
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { styled } from "@material-ui/core/styles"
 import SampleGrid from "../SampleGrid"
 import Tabs from "@material-ui/core/Tabs"
@@ -16,6 +16,8 @@ import useIsDesktop from "../../hooks/use-is-desktop"
 import useSummary from "../../hooks/use-summary"
 import * as colors from "@material-ui/core/colors"
 import SamplesTable from "../SamplesTable"
+import AddToGrid from "../AddToGrid"
+import useAddSamples from "../../hooks/use-add-samples"
 
 const Container = styled("div")({
   height: "100%",
@@ -43,11 +45,24 @@ export const SamplesView = ({
   const isDesktop = useIsDesktop()
   const { summary } = useSummary()
   const [currentTab, changeTabState] = useState("grid")
+  const addSamples = useAddSamples()
 
   const changeTab = (tab) => {
     changeTabState(tab)
     window.localStorage.lastSampleTab = tab
   }
+
+  useEffect(() => {
+    if (!summary.samples || !summary.samples.length) {
+      addSamples([
+        {
+          imageUrl:
+            "https://cdn.pixabay.com/photo/2015/06/03/13/13/cats-796437__480.jpg",
+        },
+        { imageUrl: "http://localhost:3017/601cebd58531d4362088af87.jpg" },
+      ])
+    }
+  }, [])
 
   return (
     <Container>
