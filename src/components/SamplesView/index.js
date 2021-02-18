@@ -16,8 +16,10 @@ import useIsDesktop from "../../hooks/use-is-desktop"
 import useSummary from "../../hooks/use-summary"
 import * as colors from "@material-ui/core/colors"
 import SamplesTable from "../SamplesTable"
-import AddToGrid from "../AddToGrid"
+// import AddToGrid from "../AddToGrid"
 import useAddSamples from "../../hooks/use-add-samples"
+
+let loadOnce = 0
 
 const Container = styled("div")({
   height: "100%",
@@ -53,14 +55,25 @@ export const SamplesView = ({
   }
 
   useEffect(() => {
-    if (!summary.samples || !summary.samples.length) {
-      addSamples([
-        {
-          imageUrl:
-            "https://cdn.pixabay.com/photo/2015/06/03/13/13/cats-796437__480.jpg",
-        },
-        { imageUrl: "http://localhost:3017/601cebd58531d4362088af87.jpg" },
-      ])
+    let answer
+    fetch("http://localhost:3030/interfaceWithUDT")
+      .then((response) => response.json())
+      .then((data) => {
+        answer = data
+        logAnswer()
+        populateGrid()
+      })
+
+    const logAnswer = () => {
+      console.log(answer)
+    }
+
+    const populateGrid = () => {
+      // if (!summary.samples || !summary.samples.length) {
+      if (!loadOnce) {
+        addSamples(answer)
+        loadOnce = 1
+      }
     }
   }, [])
 
