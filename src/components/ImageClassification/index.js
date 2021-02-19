@@ -9,6 +9,8 @@ import Checkbox from "@material-ui/core/Checkbox"
 import without from "lodash/without"
 import WorkspaceContainer from "../WorkspaceContainer"
 
+let jsonObjLabels = ""
+
 const brightColors = [
   colors.blue[600],
   colors.green[600],
@@ -96,11 +98,28 @@ export const ImageClassification = ({
 
   const onDone = useEventCallback((output) => {
     onModifySample({ ...sample, annotation: currentOutput })
-    if (containerProps.onExit) containerProps.onExit()
+    if (containerProps.onExit) {
+      containerProps.onExit()
+    }
   })
   const onNext = useEventCallback(() => {
     onModifySample({ ...sample, annotation: currentOutput })
     containerProps.onExit("go-to-next")
+    const mongoID = sample.imageUrl
+      .replace("http://localhost:3017/", "")
+      .split(".")[0]
+    jsonObjLabels = `{"label":"${currentOutput}", "id":"${mongoID}"}`
+    jsonObjLabels = JSON.parse(jsonObjLabels)
+
+    const sendLabelsToMongo = async () => {
+      const myLabels = await fetch("http://localhost:3030/interfaceWithUDT", {
+        method: "POST",
+        body: JSON.stringify(jsonObjLabels),
+        headers: { "Content-Type": "application/json" },
+      })
+      console.log(`#### Response from server = ${myLabels}`)
+    }
+    sendLabelsToMongo()
   })
   const onPrev = useEventCallback(() => {
     onModifySample({ ...sample, annotation: currentOutput })
@@ -130,12 +149,26 @@ export const ImageClassification = ({
       }
     }
 
-    console.log(`###### LABEL, sampleIndex = ${newOutput}, ${sampleIndex}`)
+    // console.log(`###### LABEL, sampleIndex = ${newOutput}, ${sampleIndex}`)
 
     changeCurrentOutput(newOutput)
     if (!iface.multiple && newOutput.length > 0) {
       onModifySample({ ...sample, annotation: newOutput })
       containerProps.onExit("go-to-next")
+      const mongoID = sample.imageUrl
+        .replace("http://localhost:3017/", "")
+        .split(".")[0]
+      jsonObjLabels = `{"label":"${newOutput}", "id":"${mongoID}"}`
+      jsonObjLabels = JSON.parse(jsonObjLabels)
+      const sendLabelsToMongo = async () => {
+        const myLabels = await fetch("http://localhost:3030/interfaceWithUDT", {
+          method: "POST",
+          body: JSON.stringify(jsonObjLabels),
+          headers: { "Content-Type": "application/json" },
+        })
+        console.log(`#### Response from server = ${myLabels}`)
+      }
+      sendLabelsToMongo()
     }
   })
 
@@ -181,6 +214,10 @@ export const ImageClassification = ({
       window.removeEventListener("keydown", onKeyDown)
     }
   }, [hotkeyMap, disableHotkeys])
+
+  // const log = (origin, label, index) => {
+  //   console.log(`###### TEST = ${label}, ${index} - origin: ${origin}`)
+  // }
 
   return (
     <WorkspaceContainer
@@ -229,4 +266,5 @@ export const ImageClassification = ({
   )
 }
 
+// export default ImageClassification
 export default ImageClassification

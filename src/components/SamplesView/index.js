@@ -16,8 +16,8 @@ import useIsDesktop from "../../hooks/use-is-desktop"
 import useSummary from "../../hooks/use-summary"
 import * as colors from "@material-ui/core/colors"
 import SamplesTable from "../SamplesTable"
-// import AddToGrid from "../AddToGrid"
 import useAddSamples from "../../hooks/use-add-samples"
+// import { getClasse } from "../ImageClassification"
 
 let loadOnce = 0
 
@@ -77,15 +77,8 @@ export const SamplesView = ({
     }
   }, [])
 
-  // try {
-  //   console.log(
-  //     `Object.values(summary.samples) = ${Object.values(
-  //       summary.samples
-  //     ).map((value) => console.log(value))}`
-  //   )
-  // } catch (e) {
-  //   console.log(`Error: ${e}`)
-  // }
+  // const test = getClasse()
+  // console.log(`#### Classification = ${test}`)
 
   return (
     <Container>
