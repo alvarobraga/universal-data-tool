@@ -3,6 +3,10 @@ import Survey from "material-survey/components/Survey"
 import getTaskDescription from "../../utils/get-task-description.js"
 import SampleContainer from "../SampleContainer"
 
+// const log = (variable) => {
+//   console.log(`########### ${variable}`)
+// }
+
 export const DataEntry = ({
   containerProps,
   interface: iface,

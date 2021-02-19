@@ -66,8 +66,10 @@ export const SamplesTable = ({ onClickSample }) => {
       },
     ]
     const knownKeys = new Set()
+
     for (const td of summary.samples) {
       for (const key in td) {
+        // console.log(`td[key] = ${td[key]}`)
         if (!knownKeys.has(key)) {
           columns.push({
             name: key,
@@ -78,6 +80,7 @@ export const SamplesTable = ({ onClickSample }) => {
                 : JSON.stringify(row[key]).slice(0, 30) + "...",
           })
           knownKeys.add(key)
+          // console.log(Object.values(columns))
         }
       }
     }

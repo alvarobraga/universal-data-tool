@@ -77,6 +77,16 @@ export const SamplesView = ({
     }
   }, [])
 
+  // try {
+  //   console.log(
+  //     `Object.values(summary.samples) = ${Object.values(
+  //       summary.samples
+  //     ).map((value) => console.log(value))}`
+  //   )
+  // } catch (e) {
+  //   console.log(`Error: ${e}`)
+  // }
+
   return (
     <Container>
       <Box display="flex">

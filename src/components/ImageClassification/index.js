@@ -79,6 +79,7 @@ export const ImageClassification = ({
   onModifySample,
 }) => {
   const disableHotkeys = containerProps.disableHotkeys
+  // console.log(`##### iface.labels = ${iface.labels}`)
 
   if (!iface.labels)
     throw new Error("No labels defined. Add some labels in Setup to continue.")
@@ -128,6 +129,8 @@ export const ImageClassification = ({
         newOutput = label.id
       }
     }
+
+    console.log(`###### LABEL, sampleIndex = ${newOutput}, ${sampleIndex}`)
 
     changeCurrentOutput(newOutput)
     if (!iface.multiple && newOutput.length > 0) {
