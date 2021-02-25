@@ -19,7 +19,10 @@ import SamplesTable from "../SamplesTable"
 import useAddSamples from "../../hooks/use-add-samples"
 // import { getClasse } from "../ImageClassification"
 
-let loadOnce = 0
+let numberSamples = 0,
+  previousRecordsOnMongo = "",
+  firstLoop = true,
+  numberRecordsOnMongoHasModified = false
 
 const Container = styled("div")({
   height: "100%",
@@ -55,30 +58,52 @@ export const SamplesView = ({
   }
 
   useEffect(() => {
-    let answer
+    let recordsOnMongo
     fetch("http://localhost:3030/interfaceWithUDT")
       .then((response) => response.json())
       .then((data) => {
-        answer = data
+        recordsOnMongo = data
+        if (numberSamples === recordsOnMongo.length) {
+          numberRecordsOnMongoHasModified = false
+        } else {
+          numberRecordsOnMongoHasModified = true
+        }
         logAnswer()
+        console.log("Populate Grid...")
         populateGrid()
       })
 
     const logAnswer = () => {
-      console.log(answer)
+      console.log(recordsOnMongo)
     }
 
     const populateGrid = () => {
-      // if (!summary.samples || !summary.samples.length) {
-      if (!loadOnce) {
-        addSamples(answer)
-        loadOnce = 1
+      if (numberRecordsOnMongoHasModified && firstLoop) {
+        addSamples(recordsOnMongo)
+        previousRecordsOnMongo = recordsOnMongo
+        firstLoop = false
+      } else if (numberRecordsOnMongoHasModified) {
+        const a = Object.values(recordsOnMongo).map((value) => value.imageUrl)
+        const b = Object.values(previousRecordsOnMongo).map(
+          (value) => value.imageUrl
+        )
+        const unique = a.filter((e) => !b.includes(e))
+        const recordsOnMongoMakeUnique = Object.values(unique).map((value) =>
+          JSON.parse(`{"imageUrl":"${value}"}`)
+        )
+        addSamples(recordsOnMongoMakeUnique)
+        previousRecordsOnMongo = recordsOnMongo
       }
     }
   }, [])
 
-  // const test = getClasse()
-  // console.log(`#### Classification = ${test}`)
+  const getNumberSamples = () => {
+    try {
+      numberSamples = summary.samples.length
+    } catch (err) {
+      console.log(err)
+    }
+  }
 
   return (
     <Container>
@@ -91,6 +116,7 @@ export const SamplesView = ({
         </Tabs>
         <SampleCounter>
           {(summary.samples || []).length} Samples
+          {/* {console.log(summary.samples.length)} */}
           <br />
           {(summary.samples || []).filter((s) => s?.hasAnnotation).length}{" "}
           Labels
@@ -123,6 +149,7 @@ export const SamplesView = ({
           />
         )}
       </Box>
+      {getNumberSamples()}
     </Container>
   )
 }

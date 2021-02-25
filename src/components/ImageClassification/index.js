@@ -108,7 +108,8 @@ export const ImageClassification = ({
     const mongoID = sample.imageUrl
       .replace("http://localhost:3017/", "")
       .split(".")[0]
-    jsonObjLabels = `{"label":"${currentOutput}", "id":"${mongoID}"}`
+    jsonObjLabels = `{"id":"${mongoID}", "label":"${currentOutput}"}`
+    console.log(jsonObjLabels)
     jsonObjLabels = JSON.parse(jsonObjLabels)
 
     const sendLabelsToMongo = async () => {
@@ -158,7 +159,7 @@ export const ImageClassification = ({
       const mongoID = sample.imageUrl
         .replace("http://localhost:3017/", "")
         .split(".")[0]
-      jsonObjLabels = `{"label":"${newOutput}", "id":"${mongoID}"}`
+      jsonObjLabels = `{"id":"${mongoID}", "label":"${newOutput}"}`
       jsonObjLabels = JSON.parse(jsonObjLabels)
       const sendLabelsToMongo = async () => {
         const myLabels = await fetch("http://localhost:3030/interfaceWithUDT", {
