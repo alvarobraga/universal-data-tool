@@ -81,7 +81,6 @@ export const ImageClassification = ({
   onModifySample,
 }) => {
   const disableHotkeys = containerProps.disableHotkeys
-  // console.log(`##### iface.labels = ${iface.labels}`)
 
   if (!iface.labels)
     throw new Error("No labels defined. Add some labels in Setup to continue.")

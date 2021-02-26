@@ -17,7 +17,7 @@ import useSummary from "../../hooks/use-summary"
 import * as colors from "@material-ui/core/colors"
 import SamplesTable from "../SamplesTable"
 import useAddSamples from "../../hooks/use-add-samples"
-// import { getClasse } from "../ImageClassification"
+import labelsOnMongo from "../../utils/labelsOnMongo"
 
 let numberSamples = 0,
   previousRecordsOnMongo = "",
@@ -63,19 +63,22 @@ export const SamplesView = ({
       .then((response) => response.json())
       .then((data) => {
         recordsOnMongo = data
+        labelsOnMongo.content = recordsOnMongo.map((i) => {
+          return i.labels
+        })
         if (numberSamples === recordsOnMongo.length) {
           numberRecordsOnMongoHasModified = false
         } else {
           numberRecordsOnMongoHasModified = true
         }
-        logAnswer()
+        // logAnswer()
         console.log("Populate Grid...")
         populateGrid()
       })
 
-    const logAnswer = () => {
-      console.log(recordsOnMongo)
-    }
+    // const logAnswer = () => {
+    //   console.log(recordsOnMongo)
+    // }
 
     const populateGrid = () => {
       if (numberRecordsOnMongoHasModified && firstLoop) {
@@ -116,7 +119,6 @@ export const SamplesView = ({
         </Tabs>
         <SampleCounter>
           {(summary.samples || []).length} Samples
-          {/* {console.log(summary.samples.length)} */}
           <br />
           {(summary.samples || []).filter((s) => s?.hasAnnotation).length}{" "}
           Labels

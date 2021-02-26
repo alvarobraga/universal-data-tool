@@ -10,6 +10,15 @@ import classNames from "classnames"
 import TablePagination from "@material-ui/core/TablePagination"
 import Box from "@material-ui/core/Box"
 import getBrushColorPalette from "../../utils/get-brush-color-palette"
+import labelsOnMongo from "../../utils/labelsOnMongo"
+
+const checkIfAlreadyLabeledOnMongo = (idx, returnParamFor) => {
+  if (returnParamFor === "completed") {
+    return labelsOnMongo.content[idx].length > 0 ? true : false
+  } else if (returnParamFor === "brush") {
+    return labelsOnMongo.content[idx].length > 0 ? "complete" : "incomplete"
+  }
+}
 
 const Container = styled("div")({
   flexWrap: "wrap",
@@ -145,12 +154,14 @@ export default ({ samples, onClick, tablePaginationPadding = 0 }) => {
             onClick={onClickMemo}
             key={i}
             index={i}
-            completed={samples[i]?.hasAnnotation}
-            brush={
-              samples[i]?.hasAnnotation
-                ? samples[i].brush || "complete"
-                : "incomplete"
-            }
+            // completed={samples[i]?.hasAnnotation}
+            completed={checkIfAlreadyLabeledOnMongo(i, "completed")}
+            // brush={
+            //   samples[i]?.hasAnnotation
+            //     ? samples[i].brush || "complete"
+            //     : "incomplete"
+            // }
+            brush={checkIfAlreadyLabeledOnMongo(i, "brush")}
             selected={selectRange && i >= selectRange[0] && i < selectRange[1]}
             onMouseDown={startSelectRange}
             onMouseEnter={moveSelectRange}
