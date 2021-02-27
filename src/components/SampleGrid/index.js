@@ -13,10 +13,20 @@ import getBrushColorPalette from "../../utils/get-brush-color-palette"
 import labelsOnMongo from "../../utils/labelsOnMongo"
 
 const checkIfAlreadyLabeledOnMongo = (idx, returnParamFor) => {
+  // console.log(`#############${labelsOnMongo.content[idx].labels}#############`)
+  // labelsOnMongo.content[idx].labels.toString() === ""
+  //   ? console.log("Empty")
+  //   : console.log("Content")
   if (returnParamFor === "completed") {
-    return labelsOnMongo.content[idx].length > 0 ? true : false
+    return labelsOnMongo.content[idx].labels.length > 0 &&
+      labelsOnMongo.content[idx].labels.toString() !== ""
+      ? true
+      : false
   } else if (returnParamFor === "brush") {
-    return labelsOnMongo.content[idx].length > 0 ? "complete" : "incomplete"
+    return labelsOnMongo.content[idx].labels.length > 0 &&
+      labelsOnMongo.content[idx].labels.toString() !== ""
+      ? "complete"
+      : "incomplete"
   }
 }
 
@@ -154,14 +164,15 @@ export default ({ samples, onClick, tablePaginationPadding = 0 }) => {
             onClick={onClickMemo}
             key={i}
             index={i}
-            // completed={samples[i]?.hasAnnotation}
-            completed={checkIfAlreadyLabeledOnMongo(i, "completed")}
-            // brush={
-            //   samples[i]?.hasAnnotation
-            //     ? samples[i].brush || "complete"
-            //     : "incomplete"
-            // }
-            brush={checkIfAlreadyLabeledOnMongo(i, "brush")}
+            completed={
+              samples[i]?.hasAnnotation ||
+              checkIfAlreadyLabeledOnMongo(i, "completed")
+            }
+            brush={
+              samples[i]?.hasAnnotation
+                ? samples[i].brush || "complete"
+                : checkIfAlreadyLabeledOnMongo(i, "brush") //"incomplete"
+            }
             selected={selectRange && i >= selectRange[0] && i < selectRange[1]}
             onMouseDown={startSelectRange}
             onMouseEnter={moveSelectRange}

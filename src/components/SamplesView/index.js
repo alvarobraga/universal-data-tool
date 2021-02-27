@@ -63,9 +63,10 @@ export const SamplesView = ({
       .then((response) => response.json())
       .then((data) => {
         recordsOnMongo = data
-        labelsOnMongo.content = recordsOnMongo.map((i) => {
-          return i.labels
-        })
+        // labelsOnMongo.content = recordsOnMongo.map((i) => {
+        //   return i
+        // })
+        labelsOnMongo.content = recordsOnMongo
         if (numberSamples === recordsOnMongo.length) {
           numberRecordsOnMongoHasModified = false
         } else {

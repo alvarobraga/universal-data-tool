@@ -8,8 +8,36 @@ import * as colors from "@material-ui/core/colors"
 import Checkbox from "@material-ui/core/Checkbox"
 import without from "lodash/without"
 import WorkspaceContainer from "../WorkspaceContainer"
+import labelsOnMongo from "../../utils/labelsOnMongo"
 
-let jsonObjLabels = ""
+let jsonObjLabels = "",
+  hasGotLabelsOnMongo = false
+let newOutput
+
+const assignLabelsFromMongo = (url, labels) => {
+  console.log("assignLabelsFromMongo")
+  const a = labelsOnMongo.content.filter((e) => e.imageUrl === url)
+  const b = Object.values(a).map((value) => value.labels)
+  // const c = Object.values(labelsOnMongo.content).map((value) =>
+  //   console.log(`url = ${value.imageUrl}`)
+  // )
+  // console.log(`labeled as = ${b}`)
+  let currentLabelsOnMongo = []
+  labels.map((label) => {
+    b.map((e) => {
+      e.map((i) => {
+        console.log(`i = ${i} and label.id = ${label.id}`)
+        if (i === label.id) currentLabelsOnMongo.push(i)
+      })
+    })
+  })
+  console.log(`####### currentLabelsOnMongo = ${currentLabelsOnMongo}`)
+  return currentLabelsOnMongo
+}
+
+const log = () => {
+  labelsOnMongo.content.map((e) => console.log(`##### ${e.imageUrl}`))
+}
 
 const brightColors = [
   colors.blue[600],
@@ -135,7 +163,7 @@ export const ImageClassification = ({
 
   const onClickLabel = useEventCallback((label) => {
     changeEnlargedLabel(label)
-    let newOutput
+    // let newOutput
     if (
       typeof currentOutput !== "string" &&
       (currentOutput || []).includes(label.id)
@@ -236,6 +264,13 @@ export const ImageClassification = ({
       >
         <ImageContainer>
           <Image src={sample?.imageUrl} />
+          {currentOutput.length === 0 && hasGotLabelsOnMongo === false
+            ? (newOutput = assignLabelsFromMongo(sample?.imageUrl, labels))
+            : (hasGotLabelsOnMongo = true)}
+          {useEffect(() => {
+            changeCurrentOutput(newOutput)
+            console.log(`newOutput = ${newOutput}`)
+          }, [])}
         </ImageContainer>
         <ButtonsContainer>
           {labels.map((label) => (
