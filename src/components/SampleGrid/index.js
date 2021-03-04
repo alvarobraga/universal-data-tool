@@ -13,18 +13,14 @@ import getBrushColorPalette from "../../utils/get-brush-color-palette"
 import labelsOnMongo from "../../utils/labelsOnMongo"
 
 const checkIfAlreadyLabeledOnMongo = (idx, returnParamFor) => {
-  // console.log(`#############${labelsOnMongo.content[idx].labels}#############`)
-  // labelsOnMongo.content[idx].labels.toString() === ""
-  //   ? console.log("Empty")
-  //   : console.log("Content")
   if (returnParamFor === "completed") {
-    return labelsOnMongo.content[idx].labels.length > 0 &&
-      labelsOnMongo.content[idx].labels.toString() !== ""
+    return labelsOnMongo.content[idx]?.labels.length > 0 &&
+      labelsOnMongo.content[idx]?.labels.toString() !== ""
       ? true
       : false
   } else if (returnParamFor === "brush") {
-    return labelsOnMongo.content[idx].labels.length > 0 &&
-      labelsOnMongo.content[idx].labels.toString() !== ""
+    return labelsOnMongo.content[idx]?.labels.length > 0 &&
+      labelsOnMongo.content[idx]?.labels.toString() !== ""
       ? "complete"
       : "incomplete"
   }

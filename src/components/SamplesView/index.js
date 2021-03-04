@@ -47,6 +47,7 @@ export const SamplesView = ({
   openSampleLabelEditor,
   user,
 }) => {
+  console.log("############ SamplesView called")
   const isDesktop = useIsDesktop()
   const { summary } = useSummary()
   const [currentTab, changeTabState] = useState("grid")
@@ -59,27 +60,15 @@ export const SamplesView = ({
 
   useEffect(() => {
     let recordsOnMongo
-    fetch("http://localhost:3030/interfaceWithUDT")
-      .then((response) => response.json())
-      .then((data) => {
-        recordsOnMongo = data
-        // labelsOnMongo.content = recordsOnMongo.map((i) => {
-        //   return i
-        // })
-        labelsOnMongo.content = recordsOnMongo
-        if (numberSamples === recordsOnMongo.length) {
-          numberRecordsOnMongoHasModified = false
-        } else {
-          numberRecordsOnMongoHasModified = true
-        }
-        // logAnswer()
-        console.log("Populate Grid...")
-        populateGrid()
-      })
-
-    // const logAnswer = () => {
-    //   console.log(recordsOnMongo)
-    // }
+    const retriveDataFromMongo = async () => {
+      const response = await fetch("http://localhost:3030/interfaceWithUDT")
+      recordsOnMongo = await response.json()
+      labelsOnMongo.content = recordsOnMongo
+      numberRecordsOnMongoHasModified =
+        numberSamples == recordsOnMongo.length ? false : true
+      populateGrid()
+    }
+    retriveDataFromMongo()
 
     const populateGrid = () => {
       if (numberRecordsOnMongoHasModified && firstLoop) {

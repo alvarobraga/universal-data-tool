@@ -8,35 +8,29 @@ import * as colors from "@material-ui/core/colors"
 import Checkbox from "@material-ui/core/Checkbox"
 import without from "lodash/without"
 import WorkspaceContainer from "../WorkspaceContainer"
+// import { labelsOnMongo, updateLabelsOnMongo } from "../../utils/labelsOnMongo"
 import labelsOnMongo from "../../utils/labelsOnMongo"
 
 let jsonObjLabels = "",
-  hasGotLabelsOnMongo = false
-let newOutput
+  newOutput
 
 const assignLabelsFromMongo = (url, labels) => {
   console.log("assignLabelsFromMongo")
-  const a = labelsOnMongo.content.filter((e) => e.imageUrl === url)
-  const b = Object.values(a).map((value) => value.labels)
-  // const c = Object.values(labelsOnMongo.content).map((value) =>
-  //   console.log(`url = ${value.imageUrl}`)
-  // )
-  // console.log(`labeled as = ${b}`)
   let currentLabelsOnMongo = []
-  labels.map((label) => {
-    b.map((e) => {
-      e.map((i) => {
-        console.log(`i = ${i} and label.id = ${label.id}`)
-        if (i === label.id) currentLabelsOnMongo.push(i)
+  labelsOnMongo.content.map((e) => {
+    console.log(e)
+    if (e.imageUrl === url) {
+      labels.map((label) => {
+        console.log(e.labels)
+        if (e.labels.includes(label.id)) {
+          currentLabelsOnMongo.push(label.id)
+          console.log("#### INCLUDES")
+        }
       })
-    })
+    }
   })
-  console.log(`####### currentLabelsOnMongo = ${currentLabelsOnMongo}`)
+  currentLabelsOnMongo.map((i) => console.log(`#### i = ${i}`))
   return currentLabelsOnMongo
-}
-
-const log = () => {
-  labelsOnMongo.content.map((e) => console.log(`##### ${e.imageUrl}`))
 }
 
 const brightColors = [
@@ -135,7 +129,7 @@ export const ImageClassification = ({
     const mongoID = sample.imageUrl
       .replace("http://localhost:3017/", "")
       .split(".")[0]
-    jsonObjLabels = `{"id":"${mongoID}", "label":"${currentOutput}"}`
+    jsonObjLabels = `{"id":"${mongoID}", "labels":"${currentOutput}"}`
     console.log(jsonObjLabels)
     jsonObjLabels = JSON.parse(jsonObjLabels)
 
@@ -145,9 +139,11 @@ export const ImageClassification = ({
         body: JSON.stringify(jsonObjLabels),
         headers: { "Content-Type": "application/json" },
       })
-      console.log(`#### Response from server = ${myLabels}`)
     }
     sendLabelsToMongo()
+    labelsOnMongo.content.map((e) => {
+      if (e.imageUrl === sample.imageUrl) e.labels = currentOutput
+    })
   })
   const onPrev = useEventCallback(() => {
     onModifySample({ ...sample, annotation: currentOutput })
@@ -177,8 +173,6 @@ export const ImageClassification = ({
       }
     }
 
-    // console.log(`###### LABEL, sampleIndex = ${newOutput}, ${sampleIndex}`)
-
     changeCurrentOutput(newOutput)
     if (!iface.multiple && newOutput.length > 0) {
       onModifySample({ ...sample, annotation: newOutput })
@@ -186,7 +180,7 @@ export const ImageClassification = ({
       const mongoID = sample.imageUrl
         .replace("http://localhost:3017/", "")
         .split(".")[0]
-      jsonObjLabels = `{"id":"${mongoID}", "label":"${newOutput}"}`
+      jsonObjLabels = `{"id":"${mongoID}", "labels":"${newOutput}"}`
       jsonObjLabels = JSON.parse(jsonObjLabels)
       const sendLabelsToMongo = async () => {
         const myLabels = await fetch("http://localhost:3030/interfaceWithUDT", {
@@ -197,6 +191,9 @@ export const ImageClassification = ({
         console.log(`#### Response from server = ${myLabels}`)
       }
       sendLabelsToMongo()
+      labelsOnMongo.content.map((e) => {
+        if (e.imageUrl === sample.imageUrl) e.labels = [newOutput]
+      })
     }
   })
 
@@ -243,10 +240,6 @@ export const ImageClassification = ({
     }
   }, [hotkeyMap, disableHotkeys])
 
-  // const log = (origin, label, index) => {
-  //   console.log(`###### TEST = ${label}, ${index} - origin: ${origin}`)
-  // }
-
   return (
     <WorkspaceContainer
       {...containerProps}
@@ -264,12 +257,17 @@ export const ImageClassification = ({
       >
         <ImageContainer>
           <Image src={sample?.imageUrl} />
-          {currentOutput.length === 0 && hasGotLabelsOnMongo === false
-            ? (newOutput = assignLabelsFromMongo(sample?.imageUrl, labels))
-            : (hasGotLabelsOnMongo = true)}
           {useEffect(() => {
+            const getLabelsOnMongo = () =>
+              currentOutput.length === 0
+                ? (newOutput = assignLabelsFromMongo(sample?.imageUrl, labels))
+                : null
+            getLabelsOnMongo()
+            console.log(
+              `######### currentOutput.length = ${currentOutput.length}`
+            )
             changeCurrentOutput(newOutput)
-            console.log(`newOutput = ${newOutput}`)
+            console.log(`##### newOutput = ${newOutput}`)
           }, [])}
         </ImageContainer>
         <ButtonsContainer>
