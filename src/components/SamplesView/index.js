@@ -21,7 +21,7 @@ import labelsOnMongo from "../../utils/labelsOnMongo"
 
 let numberSamples = 0,
   previousRecordsOnMongo = "",
-  firstLoop = true,
+  firstCall = true,
   numberRecordsOnMongoHasModified = false
 
 const Container = styled("div")({
@@ -47,7 +47,6 @@ export const SamplesView = ({
   openSampleLabelEditor,
   user,
 }) => {
-  console.log("############ SamplesView called")
   const isDesktop = useIsDesktop()
   const { summary } = useSummary()
   const [currentTab, changeTabState] = useState("grid")
@@ -60,7 +59,7 @@ export const SamplesView = ({
 
   useEffect(() => {
     let recordsOnMongo
-    const retriveDataFromMongo = async () => {
+    const retrieveDataFromMongo = async () => {
       const response = await fetch("http://localhost:3030/interfaceWithUDT")
       recordsOnMongo = await response.json()
       labelsOnMongo.content = recordsOnMongo
@@ -68,13 +67,13 @@ export const SamplesView = ({
         numberSamples == recordsOnMongo.length ? false : true
       populateGrid()
     }
-    retriveDataFromMongo()
+    retrieveDataFromMongo()
 
     const populateGrid = () => {
-      if (numberRecordsOnMongoHasModified && firstLoop) {
+      if (numberRecordsOnMongoHasModified && firstCall) {
         addSamples(recordsOnMongo)
         previousRecordsOnMongo = recordsOnMongo
-        firstLoop = false
+        firstCall = false
       } else if (numberRecordsOnMongoHasModified) {
         const a = Object.values(recordsOnMongo).map((value) => value.imageUrl)
         const b = Object.values(previousRecordsOnMongo).map(

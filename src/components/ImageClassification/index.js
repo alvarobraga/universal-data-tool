@@ -104,17 +104,58 @@ export const ImageClassification = ({
 }) => {
   const disableHotkeys = containerProps.disableHotkeys
 
+  // let allLabels
+  // const considerLabelsOnMongoNotDefinedOnUDT = () => {
+  //   let a = []
+  //   labelsOnMongo.content.map((e) => {
+  //     if (!iface.labels.includes(e)) a.push(e)
+  //   })
+  //   return a
+  // }
+
   if (!iface.labels)
     throw new Error("No labels defined. Add some labels in Setup to continue.")
 
   const [enlargedLabel, changeEnlargedLabel] = useState(null)
   const [currentOutput, changeCurrentOutput] = useState(emptyArr)
+
+  let allLabels = Object.values(iface.labels)
+  // let allLabels = []
+
+  // if (typeof iface.labels[0] == "object") {
+  //   Object.values(iface.labels).map((obj) => {
+  //     allLabels = Object.values(obj)
+  //   })
+  // } else if (typeof iface.labels[0] == "string") {
+  //   allLabels = Object.values(iface.labels)
+  // }
+
+  labelsOnMongo.content.map((e) => {
+    if (e.labels.toString() !== "") {
+      const labels = e.labels.toString().split(",")
+      labels.forEach((l) => {
+        if (allLabels.indexOf(l) == -1) allLabels.push(l)
+      })
+    }
+  })
+
+  // labelsOnMongo.content.map((e) => {
+  //   const labels = e.labels.toString().split(",")
+  //   labels.forEach((l) => {
+  //     if (allLabels.indexOf(l) == -1) allLabels.push(l)
+  //   })
+  // })
+
+  console.log(`##### allLabels = ${allLabels}`)
+
   const labels = useMemo(
     () =>
-      iface.labels.map((l) =>
+      // iface.labels.map((l) =>
+      allLabels.map((l) =>
         typeof l === "string" ? { id: l, description: l } : l
       ),
-    [iface.labels]
+    // [iface.labels]
+    [allLabels]
   )
 
   const onDone = useEventCallback((output) => {

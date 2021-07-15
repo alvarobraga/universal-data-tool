@@ -27,6 +27,15 @@ export default ({ onClearLabelData }) => {
 
   const [currentTab, setTab] = useState(iface?.type ? "configure" : "datatype")
 
+  const showInterface = (iface) => {
+    Object.keys(iface).map((k) => console.log(`####### iface keys = ${k}`))
+    Object.values(iface).map((v) => console.log(`####### iface values = ${v}`))
+    // updateInterface({
+    //   type: "image_classification",
+    //   labels: ["label 1", "label 2"],
+    // })
+  }
+
   return (
     <div>
       <Box padding="8px" paddingBottom="0px">
@@ -64,6 +73,7 @@ export default ({ onClearLabelData }) => {
       )}
       {currentTab === "configure" && (
         <>
+          {showInterface(iface)}
           <ConfigureInterface
             key="configureInterface"
             interface={iface}

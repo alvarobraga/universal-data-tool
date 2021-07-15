@@ -6,6 +6,11 @@ export default (datasetPropertyKey: string) => {
   const [propVersion, incPropVersion] = useReducer((state) => state + 1, 0)
   const [dm] = useActiveDatasetManager()
 
+  const test = {
+    type: "image_classification",
+    labels: ["label 1", "label 2"],
+  }
+
   useEffect(() => {
     if (!dm || !datasetPropertyKey) return
     dm.on("dataset-property-changed", ({ key }) => {
@@ -18,7 +23,8 @@ export default (datasetPropertyKey: string) => {
   useEffect(() => {
     if (!dm || !datasetPropertyKey) return
     dm.getDatasetProperty(datasetPropertyKey).then((newPropVal) => {
-      setPropVal(newPropVal)
+      setPropVal(newPropVal) //Original
+      // setPropVal(test) //Modified by Alvaro
     })
   }, [dm, propVersion, datasetPropertyKey])
 

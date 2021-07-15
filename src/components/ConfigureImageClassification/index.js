@@ -28,6 +28,8 @@ const form = {
 }
 
 export default ({ iface, onChange }) => {
+  console.log(`#### iface.labels = ${iface.labels}`)
+
   const defaultAnswers = useMemo(
     () => ({
       multiple: iface.multiple ? iface.multiple : false,
@@ -38,6 +40,7 @@ export default ({ iface, onChange }) => {
     }),
     [iface.labels, iface.multiple]
   )
+
   return (
     <Survey
       noActions

@@ -1,10 +1,12 @@
 import React from "react"
-import createMuiTheme from "@material-ui/core/styles/createMuiTheme"
+// import createMuiTheme from "@material-ui/core/styles/createMuiTheme" see myLog.log in ..\..\..\Issues
+import createTheme from "@material-ui/core/styles/createTheme"
 import { ThemeProvider } from "@material-ui/core/styles"
 import "./theme.css"
 import * as colors from "@material-ui/core/colors"
 
-const theme = createMuiTheme({
+// const theme = createMuiTheme({
+const theme = createTheme({
   palette: {
     primary: colors.blue,
     secondary: colors.blue,

@@ -1,0 +1,5 @@
+./src/components/Theme/index.js
+Module not found: Can't resolve '@material-ui/core/styles/createMuiTheme' in 'C:\Users\alvar\Documents\GitHub\universal-data-tool\src\components\Theme'
+-- Read: https://next.material-ui.com/guides/migration-v4/
+The function createMuiTheme was renamed to createTheme to make more intuitive to use with ThemeProvider.
+--- Replaced createMuiTheme by createTheme in ./src/components/Theme/index.js
