@@ -1,0 +1,6 @@
+{
+    "Name": "Stornoway Classification",
+    "type": "image_classification",
+    "labels": ["pothole", "crack", "defect 3", "defect 4"],
+    "multiple": true
+}

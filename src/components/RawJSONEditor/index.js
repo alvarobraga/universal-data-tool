@@ -4,25 +4,13 @@ import Box from "@material-ui/core/Box"
 import Button from "@material-ui/core/Button"
 import { useToasts } from "../Toasts"
 
+import userPreConfiguration from "../UserPreConfiguration/UserPreConfiguration.json"
+
 export const RawJSONEditor = ({ content, onSave }) => {
   const [jsonText, setJSONText] = useState("")
   const { addToast } = useToasts()
 
-  const changeContentJson = (cont) => {
-    let contText = ""
-
-    try {
-      const contJson = JSON.parse(cont)
-      contJson.interface.labels = ["label 1", "label 2", "label 3"]
-      contText = JSON.stringify(contJson)
-    } catch {}
-
-    // const contText = JSON.stringify(contJson)
-
-    return contText
-  }
-
-  const showContent = (cont) => console.log(cont)
+  const userPreConfigurationText = JSON.stringify(userPreConfiguration, null, 1)
 
   useEffect(() => {
     if (!content) return
@@ -32,27 +20,29 @@ export const RawJSONEditor = ({ content, onSave }) => {
     } else if (typeof content === "object") {
       setJSONText(JSON.stringify(content, null, "  "))
       console.log("##### JSON Editor as Object")
+      console.log(`#### jsonText = ${jsonText}`)
     }
   }, [content])
+
   return (
     <Box position="relative" width="100%">
       <AceEditor
         theme="github"
         mode="javascript"
         width="100%"
-        value={jsonText}
-        // value={changeContentJson(jsonText)}
+        // value={jsonText}
+        value={userPreConfigurationText}
         editorProps={{ $blockScrolling: Infinity }}
         onChange={(t) => setJSONText(t)}
       />
-      {/* {showContent(jsonText)} */}
       <Box position="absolute" right={16} top={16}>
         <Button
           variant="contained"
           color="primary"
           onClick={() => {
             try {
-              onSave(JSON.parse(jsonText))
+              // onSave(JSON.parse(jsonText)) //original
+              onSave(userPreConfiguration) //Added by Alvaro
             } catch (e) {
               addToast("Invalid JSON", "error")
             }

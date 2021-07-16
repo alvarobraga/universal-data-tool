@@ -27,5 +27,7 @@ export default () => {
     }
   }, [dm])
 
+  console.log(`##### dataset = ${dataset}`)
+
   return [dataset, dm.setDataset]
 }
